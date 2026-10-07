@@ -1,0 +1,6 @@
+{
+  "name": "SIM-RT/RW Griya Harmoni",
+  "description": "Sistem Informasi Warga, Rekapitulasi Iuran Bulanan, dan Portal Pengumuman RT/RW Berbasis Next.js & Supabase",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

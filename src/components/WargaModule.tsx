@@ -248,10 +248,29 @@ export const WargaModule: React.FC<WargaModuleProps> = ({
 
       {/* Main Table for Desktop & Cards for Mobile */}
       <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
-        {filteredWarga.length === 0 ? (
+        {wargaList.length === 0 ? (
+          <div className="text-center py-16 px-4 space-y-3">
+            <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto text-slate-400">
+              <Users className="w-7 h-7" />
+            </div>
+            <h3 className="text-base font-bold text-slate-900">Database Warga Masih Bersih (Kosong)</h3>
+            <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
+              Seluruh data placeholder telah dibersihkan. Anda dapat mulai memasukkan data kepala keluarga dan alamat rumah warga Komplek Depkes yang sesungguhnya.
+            </p>
+            <div className="pt-2">
+              <button
+                onClick={handleOpenAdd}
+                className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs rounded-lg transition-colors shadow-xs inline-flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                {isAdmin ? 'Tambah Data Warga Pertama' : 'Login Pengurus untuk Tambah Warga'}
+              </button>
+            </div>
+          </div>
+        ) : filteredWarga.length === 0 ? (
           <div className="text-center py-12 px-4">
             <Users className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-            <h3 className="text-base font-semibold text-slate-800">Tidak ada data warga ditemukan</h3>
+            <h3 className="text-base font-semibold text-slate-800">Tidak ada data warga yang cocok</h3>
             <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1">
               Coba sesuaikan kata kunci pencarian atau reset filter blok dan status penghuni.
             </p>

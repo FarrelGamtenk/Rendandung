@@ -22,7 +22,7 @@ export const KuitansiModal: React.FC<KuitansiModalProps> = ({
     window.print();
   };
 
-  const shareText = `Halo Bapak/Ibu ${warga.nama_lengkap} (${warga.blok_rumah}), terima kasih telah melunasi Iuran RT Bulan ${bulanName} ${iuran.tahun}. No Kuitansi: ${iuran.nomor_kuitansi || '-'}. Nominal: ${formatRupiah(iuran.jumlah_bayar)}. Kas RT 04 Griya Harmoni.`;
+  const shareText = `Halo Bapak/Ibu ${warga.nama_lengkap} (${warga.blok_rumah}), terima kasih telah melunasi Iuran RT Bulan ${bulanName} ${iuran.tahun}. No Kuitansi: ${iuran.nomor_kuitansi || '-'}. Nominal: ${formatRupiah(iuran.jumlah_bayar)}. Kas RT 04 Komplek Depkes.`;
 
   const waShareUrl = `https://wa.me/${warga.no_hp.replace(/\D/g, '').replace(/^0/, '62')}?text=${encodeURIComponent(shareText)}`;
 

@@ -12,17 +12,13 @@ import { HeroSection } from './components/HeroSection';
 import { WargaModule } from './components/WargaModule';
 import { IuranModule } from './components/IuranModule';
 import { BeritaModule } from './components/BeritaModule';
-import { PanduanModule } from './components/PanduanModule';
 import { AuthModal } from './components/AuthModal';
 import { KuitansiModal } from './components/KuitansiModal';
-import { 
-  Building2, Phone, Mail, Shield, Heart, MapPin, 
-  CheckCircle2, AlertCircle 
-} from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 
 export default function App() {
   // Navigation State
-  const [activeTab, setActiveTab] = useState<'beranda' | 'warga' | 'iuran' | 'berita' | 'panduan'>('beranda');
+  const [activeTab, setActiveTab] = useState<'beranda' | 'warga' | 'iuran' | 'berita'>('beranda');
 
   // Admin Authentication State
   const [isAdmin, setIsAdmin] = useState<boolean>(() => {
@@ -47,20 +43,38 @@ export default function App() {
   // Supabase connection state
   const [isSupabaseConnected, setIsSupabaseConnected] = useState(false);
 
-  // Core Data States
+  // Core Data States (Bersih tanpa placeholder)
   const [pengaturan, setPengaturan] = useState<PengaturanRT>(() => {
-    const saved = localStorage.getItem('sim_rt_pengaturan');
-    return saved ? JSON.parse(saved) : INITIAL_PENGATURAN;
+    return INITIAL_PENGATURAN;
   });
 
   const [wargaList, setWargaList] = useState<Warga[]>(() => {
-    const saved = localStorage.getItem('sim_rt_warga');
-    return saved ? JSON.parse(saved) : INITIAL_WARGA;
+    // Purge legacy dummy data
+    localStorage.removeItem('sim_rt_warga');
+    localStorage.removeItem('sim_rt_iuran');
+    const saved = localStorage.getItem('sim_rt_warga_v2');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+    return [];
   });
 
   const [iuranList, setIuranList] = useState<Iuran[]>(() => {
-    const saved = localStorage.getItem('sim_rt_iuran');
-    return saved ? JSON.parse(saved) : INITIAL_IURAN;
+    const saved = localStorage.getItem('sim_rt_iuran_v2');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+    return [];
   });
 
   const [beritaList, setBeritaList] = useState<Berita[]>(() => {
@@ -70,11 +84,13 @@ export default function App() {
 
   // Save to localStorage whenever data changes
   useEffect(() => {
-    localStorage.setItem('sim_rt_warga', JSON.stringify(wargaList));
+    localStorage.setItem('sim_rt_warga_v2', JSON.stringify(wargaList));
+    localStorage.removeItem('sim_rt_warga');
   }, [wargaList]);
 
   useEffect(() => {
-    localStorage.setItem('sim_rt_iuran', JSON.stringify(iuranList));
+    localStorage.setItem('sim_rt_iuran_v2', JSON.stringify(iuranList));
+    localStorage.removeItem('sim_rt_iuran');
   }, [iuranList]);
 
   useEffect(() => {
@@ -209,56 +225,19 @@ export default function App() {
         isAdmin={isAdmin}
         onOpenAuth={() => setIsAuthModalOpen(true)}
         onLogout={handleLogout}
-        isSupabaseConnected={isSupabaseConnected}
-        onOpenSupabaseConfig={() => setActiveTab('panduan')}
       />
 
       {/* Main Content Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 pb-16">
         {activeTab === 'beranda' && (
-          <div className="space-y-10">
-            <HeroSection
-              wargaList={wargaList}
-              iuranList={iuranList}
-              pengaturan={pengaturan}
-              onNavigate={(tab) => setActiveTab(tab)}
-              isAdmin={isAdmin}
-              onOpenAuth={() => setIsAuthModalOpen(true)}
-            />
-
-            {/* Quick Preview of Announcements on Home */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-bold text-slate-900">Pengumuman & Agenda Terkini</h3>
-                  <p className="text-xs text-slate-500">Kabar lingkungan terbaru untuk warga komplek</p>
-                </div>
-                <button
-                  onClick={() => setActiveTab('berita')}
-                  className="text-xs font-semibold text-emerald-700 hover:text-emerald-800"
-                >
-                  Lihat Semua Pengumuman →
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {beritaList.slice(0, 2).map((b) => (
-                  <div
-                    key={b.id}
-                    onClick={() => setActiveTab('berita')}
-                    className="bg-white p-5 rounded-xl border border-slate-200 hover:border-slate-300 transition-all cursor-pointer shadow-xs"
-                  >
-                    <div className="flex items-center justify-between text-xs text-slate-500 mb-2">
-                      <span className="font-semibold text-emerald-700">{b.kategori}</span>
-                      <span className="font-mono-numbers">{b.tanggal}</span>
-                    </div>
-                    <h4 className="text-sm font-bold text-slate-900 mb-1.5">{b.judul}</h4>
-                    <p className="text-xs text-slate-600 line-clamp-2">{b.ringkasan || b.isi}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          <HeroSection
+            wargaList={wargaList}
+            iuranList={iuranList}
+            pengaturan={pengaturan}
+            onNavigate={(tab) => setActiveTab(tab)}
+            isAdmin={isAdmin}
+            onOpenAuth={() => setIsAuthModalOpen(true)}
+          />
         )}
 
         {activeTab === 'warga' && (
@@ -295,98 +274,7 @@ export default function App() {
             onOpenAuth={() => setIsAuthModalOpen(true)}
           />
         )}
-
-        {activeTab === 'panduan' && (
-          <PanduanModule
-            onOpenSupabaseConfig={() => {}}
-            isSupabaseConnected={isSupabaseConnected}
-          />
-        )}
       </main>
-
-      {/* Footer */}
-      <footer className="mt-16 bg-white border-t border-slate-200 py-10 text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="md:col-span-2 space-y-2.5">
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-emerald-600 flex items-center justify-center text-white font-bold text-xs">
-                RT
-              </div>
-              <span className="font-bold text-slate-900 text-sm">
-                SIM {pengaturan.rt_rw} {pengaturan.nama_perumahan}
-              </span>
-            </div>
-            <p className="text-slate-600 max-w-sm leading-relaxed">
-              Sistem Informasi Manajemen Warga, Rekapitulasi Iuran Bulanan Terpadu, dan Transparansi Keuangan Lingkungan berbasis Next.js App Router & Supabase.
-            </p>
-            <div className="text-slate-400 pt-1">
-              {pengaturan.kelurahan}, {pengaturan.kecamatan}, {pengaturan.kota}
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <span className="font-bold text-slate-900 text-xs uppercase tracking-wider block">
-              Menu Cepat
-            </span>
-            <ul className="space-y-1.5">
-              <li>
-                <button onClick={() => setActiveTab('beranda')} className="hover:text-slate-900">
-                  Beranda Portal
-                </button>
-              </li>
-              <li>
-                <button onClick={() => setActiveTab('warga')} className="hover:text-slate-900">
-                  Direktori Data Warga
-                </button>
-              </li>
-              <li>
-                <button onClick={() => setActiveTab('iuran')} className="hover:text-slate-900">
-                  Rekapitulasi Iuran 12 Bulan
-                </button>
-              </li>
-              <li>
-                <button onClick={() => setActiveTab('berita')} className="hover:text-slate-900">
-                  Pengumuman & Agenda
-                </button>
-              </li>
-              <li>
-                <button onClick={() => setActiveTab('panduan')} className="hover:text-slate-900">
-                  Panduan Deploy Vercel
-                </button>
-              </li>
-            </ul>
-          </div>
-
-          <div className="space-y-2">
-            <span className="font-bold text-slate-900 text-xs uppercase tracking-wider block">
-              Sekretariat & Hotline
-            </span>
-            <div className="space-y-1.5 text-slate-600">
-              <div className="flex items-center gap-1.5">
-                <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                <span>Balai Warga Blok B (Fasum)</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                <span>Pos Sekuriti: {pengaturan.nomor_hotline_keamanan}</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Shield className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                <span>Rekening: {pengaturan.nama_bank} {pengaturan.no_rekening}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-2 text-slate-400">
-          <div>
-            © 2026 {pengaturan.nama_perumahan} ({pengaturan.rt_rw}). Hak Cipta Dilindungi.
-          </div>
-          <div className="flex items-center gap-1">
-            <span>Dirancang untuk kemudahan warga & transparansi pengurus</span>
-          </div>
-        </div>
-      </footer>
 
       {/* AUTH MODAL */}
       <AuthModal

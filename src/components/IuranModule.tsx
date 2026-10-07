@@ -362,93 +362,111 @@ export const IuranModule: React.FC<IuranModuleProps> = ({
       </div>
 
       {/* Grid Rekapitulasi Iuran (12 Bulan) */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
-        <div className="overflow-x-auto custom-scrollbar">
-          <table className="w-full text-left text-xs sm:text-sm border-collapse">
-            <thead className="bg-slate-50/90 border-b border-slate-200 text-slate-600 font-semibold text-[11px] uppercase tracking-wider">
-              <tr>
-                <th className="py-3 px-4 sticky left-0 bg-slate-50 z-20 shadow-xs">Blok / Rumah</th>
-                <th className="py-3 px-4 min-w-[150px]">Nama Kepala Keluarga</th>
-                {BULAN_SHORT.map((b, idx) => (
-                  <th key={b} className="py-3 px-2 text-center min-w-[58px]">
-                    {b}
-                  </th>
-                ))}
-                <th className="py-3 px-4 text-right min-w-[120px]">Total Terbayar</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {filteredWarga.map((warga) => {
-                let totalKKBayar = 0;
-                return (
-                  <tr key={warga.id} className="hover:bg-slate-50/60 transition-colors">
-                    {/* Sticky Alamat */}
-                    <td className="py-2.5 px-4 sticky left-0 bg-white font-mono-numbers font-bold text-slate-900 whitespace-nowrap z-10 border-r border-slate-100 shadow-xs">
-                      {warga.blok_rumah}
-                    </td>
-
-                    {/* Nama KK */}
-                    <td className="py-2.5 px-4 font-medium text-slate-800 whitespace-nowrap">
-                      {warga.nama_lengkap}
-                    </td>
-
-                    {/* 12 Bulan Grid Cells */}
-                    {Array.from({ length: 12 }, (_, i) => i + 1).map((bulan) => {
-                      const item = iuranMap.get(`${warga.id}_${bulan}`);
-                      const isLunas = item && item.status_bayar === 'Lunas';
-                      if (isLunas) {
-                        totalKKBayar += Number(item.jumlah_bayar);
-                      }
-
-                      return (
-                        <td key={bulan} className="py-2 px-1 text-center">
-                          <button
-                            onClick={() => handleCellClick(warga, bulan)}
-                            title={
-                              isLunas
-                                ? `Lunas: ${item.nomor_kuitansi || 'Tercatat'} (${item.tanggal_bayar}) - Klik untuk kuitansi`
-                                : `Belum Bayar ${BULAN_NAMES[bulan - 1]} - ${isAdmin ? 'Klik untuk catat bayar' : 'Hubungi bendahara'}`
-                            }
-                            className={`w-10 h-8 mx-auto rounded font-semibold text-[11px] flex items-center justify-center transition-all ${
-                              isLunas
-                                ? 'bg-emerald-500 text-white hover:bg-emerald-600 shadow-xs'
-                                : 'bg-rose-50 text-rose-500 hover:bg-rose-100 border border-rose-200/60'
-                            }`}
-                          >
-                            {isLunas ? '✓' : '—'}
-                          </button>
-                        </td>
-                      );
-                    })}
-
-                    {/* Total Terbayar Setahun */}
-                    <td className="py-2.5 px-4 text-right font-mono-numbers font-bold text-slate-900 whitespace-nowrap">
-                      {formatRupiah(totalKKBayar)}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-            {/* Tfoot: Rekap Total per Bulan */}
-            <tfoot className="bg-slate-100/80 border-t-2 border-slate-200 font-bold text-xs text-slate-800">
-              <tr>
-                <td className="py-3 px-4 sticky left-0 bg-slate-100 z-10">TOTAL MASUK</td>
-                <td className="py-3 px-4 font-mono-numbers text-slate-600">
-                  {stats.totalTransaksi} transaksi
-                </td>
-                {Array.from({ length: 12 }, (_, i) => (
-                  <td key={i} className="py-3 px-1 text-center font-mono-numbers text-[11px]">
-                    {stats.perBulanCount[i]} KK
-                  </td>
-                ))}
-                <td className="py-3 px-4 text-right font-mono-numbers text-emerald-700">
-                  {formatRupiah(stats.totalTerkumpul)}
-                </td>
-              </tr>
-            </tfoot>
-          </table>
+      {filteredWarga.length === 0 ? (
+        <div className="bg-white rounded-xl border border-slate-200 p-12 text-center shadow-xs space-y-2">
+          <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center mx-auto text-slate-400">
+            <CreditCard className="w-6 h-6" />
+          </div>
+          <h3 className="text-base font-bold text-slate-800">
+            {wargaList.length === 0
+              ? 'Database Iuran Bersih (Belum Ada Warga Terdaftar)'
+              : 'Tidak Ada Warga yang Cocok dengan Pencarian'}
+          </h3>
+          <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
+            {wargaList.length === 0
+              ? 'Tabel rekapitulasi iuran bulanan 12 bulan (Januari - Desember) akan otomatis terbentuk segera setelah data warga ditambahkan ke sistem.'
+              : 'Coba sesuaikan kata kunci pencarian warga di atas.'}
+          </p>
         </div>
-      </div>
+      ) : (
+        <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+          <div className="overflow-x-auto custom-scrollbar">
+            <table className="w-full text-left text-xs sm:text-sm border-collapse">
+              <thead className="bg-slate-50/90 border-b border-slate-200 text-slate-600 font-semibold text-[11px] uppercase tracking-wider">
+                <tr>
+                  <th className="py-3 px-4 sticky left-0 bg-slate-50 z-20 shadow-xs">Blok / Rumah</th>
+                  <th className="py-3 px-4 min-w-[150px]">Nama Kepala Keluarga</th>
+                  {BULAN_SHORT.map((b) => (
+                    <th key={b} className="py-3 px-2 text-center min-w-[58px]">
+                      {b}
+                    </th>
+                  ))}
+                  <th className="py-3 px-4 text-right min-w-[120px]">Total Terbayar</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {filteredWarga.map((warga) => {
+                  let totalKKBayar = 0;
+                  return (
+                    <tr key={warga.id} className="hover:bg-slate-50/60 transition-colors">
+                      {/* Sticky Alamat */}
+                      <td className="py-2.5 px-4 sticky left-0 bg-white font-mono-numbers font-bold text-slate-900 whitespace-nowrap z-10 border-r border-slate-100 shadow-xs">
+                        {warga.blok_rumah}
+                      </td>
+
+                      {/* Nama KK */}
+                      <td className="py-2.5 px-4 font-medium text-slate-800 whitespace-nowrap">
+                        {warga.nama_lengkap}
+                      </td>
+
+                      {/* 12 Bulan Grid Cells */}
+                      {Array.from({ length: 12 }, (_, i) => i + 1).map((bulan) => {
+                        const item = iuranMap.get(`${warga.id}_${bulan}`);
+                        const isLunas = item && item.status_bayar === 'Lunas';
+                        if (isLunas) {
+                          totalKKBayar += Number(item.jumlah_bayar);
+                        }
+
+                        return (
+                          <td key={bulan} className="py-2 px-1 text-center">
+                            <button
+                              onClick={() => handleCellClick(warga, bulan)}
+                              title={
+                                isLunas
+                                  ? `Lunas: ${item.nomor_kuitansi || 'Tercatat'} (${item.tanggal_bayar}) - Klik untuk kuitansi`
+                                  : `Belum Bayar ${BULAN_NAMES[bulan - 1]} - ${isAdmin ? 'Klik untuk catat bayar' : 'Hubungi bendahara'}`
+                              }
+                              className={`w-10 h-8 mx-auto rounded font-semibold text-[11px] flex items-center justify-center transition-all ${
+                                isLunas
+                                  ? 'bg-emerald-500 text-white hover:bg-emerald-600 shadow-xs'
+                                  : 'bg-rose-50 text-rose-500 hover:bg-rose-100 border border-rose-200/60'
+                              }`}
+                            >
+                              {isLunas ? '✓' : '—'}
+                            </button>
+                          </td>
+                        );
+                      })}
+
+                      {/* Total Terbayar Setahun */}
+                      <td className="py-2.5 px-4 text-right font-mono-numbers font-bold text-slate-900 whitespace-nowrap">
+                        {formatRupiah(totalKKBayar)}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+              {/* Tfoot: Rekap Total per Bulan */}
+              <tfoot className="bg-slate-100/80 border-t-2 border-slate-200 font-bold text-xs text-slate-800">
+                <tr>
+                  <td className="py-3 px-4 sticky left-0 bg-slate-100 z-10">TOTAL MASUK</td>
+                  <td className="py-3 px-4 font-mono-numbers text-slate-600">
+                    {stats.totalTransaksi} transaksi
+                  </td>
+                  {Array.from({ length: 12 }, (_, i) => (
+                    <td key={i} className="py-3 px-1 text-center font-mono-numbers text-[11px]">
+                      {stats.perBulanCount[i]} KK
+                    </td>
+                  ))}
+                  <td className="py-3 px-4 text-right font-mono-numbers text-emerald-700">
+                    {formatRupiah(stats.totalTerkumpul)}
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      )}
 
       {/* MODAL: Catat Pembayaran / Edit Status Iuran */}
       {activeCell && (

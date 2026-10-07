@@ -15,7 +15,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   onLoginSuccess,
   isSupabaseLive,
 }) => {
-  const [email, setEmail] = useState('admin@griyaharmoni.id');
+  const [email, setEmail] = useState('admin@komplekdepkes.id');
   const [password, setPassword] = useState('admin123');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -69,7 +69,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-      onLoginSuccess('admin@griyaharmoni.id');
+      onLoginSuccess('admin@komplekdepkes.id');
       onClose();
     }, 300);
   };
@@ -111,7 +111,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 <input
                   type="email"
                   required
-                  placeholder="admin@griyaharmoni.id"
+                  placeholder="admin@komplekdepkes.id"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-9 pr-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -161,7 +161,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               1-Klik Masuk Mode Demo Admin
             </button>
             <p className="text-[11px] text-slate-500 text-center mt-2">
-              Akun demo: <code className="text-slate-700 font-semibold">admin@griyaharmoni.id</code> (pass: <code className="text-slate-700">admin123</code>)
+              Akun demo: <code className="text-slate-700 font-semibold">admin@komplekdepkes.id</code> (pass: <code className="text-slate-700">admin123</code>)
             </p>
           </div>
         </div>

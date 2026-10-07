@@ -126,40 +126,10 @@ CREATE POLICY "Pengurus dapat mengubah pengaturan RT"
 -- ====================================================================
 
 INSERT INTO public.pengaturan_rt (id, nama_perumahan, rt_rw, kelurahan, kecamatan, kota, nominal_iuran)
-VALUES ('primary', 'Komplek Griya Harmoni Asri', 'RT 04 / RW 08', 'Sukamaju', 'Cilodong', 'Kota Depok', 100000)
+VALUES ('primary', 'Komplek Depkes', 'RT 04 / RW 08', 'Sukamaju', 'Cilodong', 'Kota Depok', 100000)
 ON CONFLICT (id) DO NOTHING;
 
--- Data Warga Awal
-INSERT INTO public.warga (id, blok_rumah, nama_lengkap, no_hp, status_penghuni, jumlah_anggota, pekerjaan, plat_nomor)
-VALUES
-    ('11111111-1111-1111-1111-111111111101', 'Blok A1 No. 01', 'Bambang Triyono, S.T.', '081288223344', 'Tetap', 4, 'Wiraswasta / Ketua RT', 'B 1234 KAA'),
-    ('11111111-1111-1111-1111-111111111102', 'Blok A1 No. 02', 'H. Rahmat Hidayat', '081399887711', 'Tetap', 3, 'PNS Kemenkeu', 'B 3456 TRH'),
-    ('11111111-1111-1111-1111-111111111103', 'Blok A1 No. 03', 'Dimas Satria Wibowo', '085711223399', 'Kontrak', 2, 'Software Engineer', 'B 6789 DSW'),
-    ('11111111-1111-1111-1111-111111111104', 'Blok A2 No. 05', 'dr. Siti Nurhaliza', '081822334455', 'Tetap', 4, 'Dokter Umum RSUD', 'B 4321 SNH'),
-    ('11111111-1111-1111-1111-111111111105', 'Blok B1 No. 08', 'Ir. Hendra Gunawan', '081277665544', 'Tetap', 5, 'Kontraktor Sipil', 'B 8765 HG'),
-    ('11111111-1111-1111-1111-111111111106', 'Blok B1 No. 09', 'Ahmad Zulkarnain', '081900112233', 'Kontrak', 3, 'Karyawan Swasta', 'B 9988 AZ'),
-    ('11111111-1111-1111-1111-111111111107', 'Blok B2 No. 12', 'Agus Prasetyo, M.M.', '081234567800', 'Tetap', 4, 'Manajer Perbankan', 'B 2345 AP'),
-    ('11111111-1111-1111-1111-111111111108', 'Blok C1 No. 04', 'Eko Yulianto', '087811992288', 'Tetap', 3, 'Arsitek Desain', 'B 5678 EY')
-ON CONFLICT (id) DO NOTHING;
-
--- Data Iuran Awal Tahun 2026 (Januari & Februari Sebagian Lunas)
-INSERT INTO public.iuran (warga_id, tahun, bulan, jumlah_bayar, status_bayar, tanggal_bayar, metode_bayar, nomor_kuitansi, dicatat_oleh)
-VALUES
-    ('11111111-1111-1111-1111-111111111101', 2026, 1, 100000, 'Lunas', '2026-01-05', 'Transfer', 'KWT-2026-01-A101', 'Bendahara RT'),
-    ('11111111-1111-1111-1111-111111111101', 2026, 2, 100000, 'Lunas', '2026-02-04', 'Transfer', 'KWT-2026-02-A101', 'Bendahara RT'),
-    ('11111111-1111-1111-1111-111111111101', 2026, 3, 100000, 'Lunas', '2026-03-02', 'Transfer', 'KWT-2026-03-A101', 'Bendahara RT'),
-    ('11111111-1111-1111-1111-111111111102', 2026, 1, 100000, 'Lunas', '2026-01-10', 'Transfer', 'KWT-2026-01-A102', 'Bendahara RT'),
-    ('11111111-1111-1111-1111-111111111102', 2026, 2, 100000, 'Lunas', '2026-02-08', 'Transfer', 'KWT-2026-02-A102', 'Bendahara RT'),
-    ('11111111-1111-1111-1111-111111111103', 2026, 1, 100000, 'Lunas', '2026-01-12', 'Tunai', 'KWT-2026-01-A103', 'Bendahara RT'),
-    ('11111111-1111-1111-1111-111111111104', 2026, 1, 100000, 'Lunas', '2026-01-03', 'Transfer', 'KWT-2026-01-A205', 'Bendahara RT'),
-    ('11111111-1111-1111-1111-111111111104', 2026, 2, 100000, 'Lunas', '2026-02-03', 'Transfer', 'KWT-2026-02-A205', 'Bendahara RT'),
-    ('11111111-1111-1111-1111-111111111104', 2026, 3, 100000, 'Lunas', '2026-03-05', 'Transfer', 'KWT-2026-03-A205', 'Bendahara RT'),
-    ('11111111-1111-1111-1111-111111111105', 2026, 1, 100000, 'Lunas', '2026-01-08', 'Transfer', 'KWT-2026-01-B108', 'Bendahara RT'),
-    ('11111111-1111-1111-1111-111111111107', 2026, 1, 100000, 'Lunas', '2026-01-09', 'Transfer', 'KWT-2026-01-B212', 'Bendahara RT'),
-    ('11111111-1111-1111-1111-111111111107', 2026, 2, 100000, 'Lunas', '2026-02-09', 'Transfer', 'KWT-2026-02-B212', 'Bendahara RT')
-ON CONFLICT (warga_id, tahun, bulan) DO NOTHING;
-
--- Data Berita & Pengumuman Awal
+-- Data Berita & Pengumuman Awal (Informasi Umum RT)
 INSERT INTO public.berita (judul, kategori, ringkasan, isi, tanggal, penulis, is_pinned)
 VALUES
     (
